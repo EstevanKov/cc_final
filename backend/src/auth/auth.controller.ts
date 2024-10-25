@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -10,17 +10,38 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
-    return this.authService.register(createUserDto);
+    try {
+      return await this.authService.register(createUserDto);
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response, error.status);
+      }
+      throw new HttpException('Error al registrar usuario', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
-    return this.authService.login(loginUserDto);
+    try {
+      return await this.authService.login(loginUserDto);
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response, error.status);
+      }
+      throw new HttpException('Error al iniciar sesión', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Post('refresh')
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     const { refresh_token } = refreshTokenDto;
-    return this.authService.refreshToken(refresh_token);
+    try {
+      return await this.authService.refreshToken(refresh_token);
+    } catch (error) {
+      if (error.response) {
+        throw new HttpException(error.response, error.status);
+      }
+      throw new HttpException('Error al refrescar el token', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

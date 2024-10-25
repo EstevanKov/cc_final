@@ -21,6 +21,6 @@ export default function MainScreen(){
 
 
         return(
-        <Redirect href="/auth/login"/>
+        <Redirect href="/"/>
         )
 }*/

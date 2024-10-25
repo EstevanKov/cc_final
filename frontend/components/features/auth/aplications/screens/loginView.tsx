@@ -1,18 +1,49 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 
 export function LoginView() {
-  const [email, setEmail] = useState("correo");
-  const [password, setPassword] = useState("pass");
+  const [email, setEmail] = useState("correo@correo.com");
+  const [password, setPassword] = useState("12345");
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const router = useRouter();
 
-  const onLogin = () => {
-    console.log("Email:", email, "Password:", password);
+  const onLogin = async () => {
+    const loginData = {
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await axios.post('http://localhost:3000/auth/login', loginData);
+      // Si el inicio de sesión es exitoso, guardar los tokens en AsyncStorage
+      const { access_token, refresh_token } = response.data;
+      await AsyncStorage.setItem('access_token', access_token);
+      await AsyncStorage.setItem('refresh_token', refresh_token);
+      
+      // Mostrar mensaje de éxito y redirigir
+      setSuccessMessage(response.data.message);
+      setErrorMessage('');
+      setTimeout(() => {
+        router.push('/'); // Redirigir a la pantalla principal
+      }, 2000);
+    } catch (error: any) { // Especificar el tipo de error como any
+      const axiosError = error.response?.data;
+      if (axiosError && axiosError.message) {
+        setErrorMessage(axiosError.message);
+      } else {
+        setErrorMessage('Error desconocido. Inténtalo de nuevo.');
+      }
+      setSuccessMessage('');
+      console.error(error);
+    }
   };
 
   return (
     <View style={styles.container}>
-      
       <Text style={styles.title}>INICIO DE SESIÓN</Text>
       <TextInput
         style={styles.input}
@@ -28,18 +59,16 @@ export function LoginView() {
         onChangeText={setPassword}
       />
       
-      <Link href={"/"} style={styles.logoutButton}>
-  <Text style={styles.logoutButtonText}>                                  INICIAR SESIÓN</Text>
-</Link>
-      
-      {/*       <Button title="INICIAR SESIÓN" onPress={() => onLogin()} />
- <View style={styles.linkContainer}>
-        <Link href="/medications">Ir a Medicinas</Link>
-      </View>*/}
+      <Button title="INICIAR SESIÓN" onPress={onLogin} />
 
-      <Link href="/users/register">¿No tienes una cuenta? Registrate</Link>
+      {successMessage ? (
+        <Text style={styles.success}>{successMessage}</Text>
+      ) : null}
+      {errorMessage ? (
+        <Text style={styles.error}>{errorMessage}</Text>
+      ) : null}
 
-     
+      <Link href="/users/register">¿No tienes una cuenta? Regístrate</Link>
     </View>
   );
 }
@@ -48,20 +77,6 @@ const styles = StyleSheet.create({
   container: { padding: 16, flex: 1, justifyContent: "center" },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 16 },
   input: { borderWidth: 1, padding: 8, marginVertical: 8, borderRadius: 4 },
-  linkContainer: { marginTop: 20 }, logoutButton: {
-    backgroundColor: "#2196F3",
-    padding: 15,
-    borderRadius: 10,
-    width: "100%",
-    alignSelf: "center",      // Centra el botón horizontalmente
-    marginTop: 20,
-    justifyContent: "center", // Centra el contenido verticalmente
-    alignItems: "center",     // Asegura que el texto esté centrado horizontalmente
-  },
-  logoutButtonText: {
-    color: "white",           // Color del texto
-    fontWeight: "bold",       // Texto en negrita
-    textAlign: "center",      // Centra el texto
-    width: "100%",            // Asegura que el texto ocupe todo el ancho del botón
-  }
+  error: { color: 'red', marginTop: 8 },
+  success: { color: 'blue', marginTop: 8 },
 });
