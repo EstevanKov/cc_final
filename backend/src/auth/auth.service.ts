@@ -58,17 +58,17 @@ export class AuthService {
     const user = await this.usersRepository.findOne({ where: { email } });
 
     if (!user) {
-      throw new UnauthorizedException('Credenciales incorrectas');
+      throw new UnauthorizedException('Datos incorrectos');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Credenciales incorrectas');
+      throw new UnauthorizedException('Datos incorrectos');
     }
 
     const payload = { email: user.email, sub: user.id };
     return {
-      message:'Inicio éxitoso',
+      message:'Inicio de sesión éxitoso',
       access_token: this.jwtService.sign(payload),
       refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
     };
