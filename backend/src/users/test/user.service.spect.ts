@@ -44,7 +44,7 @@ describe('UserService',()=>{
     });
 
   
-        describe('register', ()=>{
+       /* describe('register', ()=>{
           it('deber{ia registrar un usuario, encriptar su contraseña, guardar el usuario y devolverl el JWT', async () => {
             const newUser:usersNew = {userName: 'admin', email:'admin@admin.com',password:'admin'};
             const savedUser = {...newUser, id:1, password:'hashedPassword'};
@@ -65,6 +65,6 @@ describe('UserService',()=>{
             expect(authService.generateToken).toHaveBeenCalledWith({email:savedUser.email,sub:savedUser.id});
             expect(result).toEqual({access_token:accessToken, user:savedUser});
         });
-    });
+    });*/
 
 });

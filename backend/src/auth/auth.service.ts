@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,17 +16,18 @@ export class AuthService {
   ) {}
 
   async register(createUserDto: CreateUserDto) {
-    const { name, email, password } = createUserDto;
+    const { user, email, password } = createUserDto;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = this.usersRepository.create({
-      userName: name,
+    const newUser = this.usersRepository.create({
+      user: user,
       email,
       password: hashedPassword,
     });
-    await this.usersRepository.save(user);
-    const payload = { email: user.email, sub: user.id };
+    await this.usersRepository.save(newUser);
+    const payload = { email: newUser.email, sub: newUser.id };
     return {
       access_token: this.jwtService.sign(payload),
+      refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
     };
   }
 
@@ -37,21 +38,21 @@ export class AuthService {
       const payload = { email: user.email, sub: user.id };
       return {
         access_token: this.jwtService.sign(payload),
+        refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
       };
     }
-    throw new Error('Los datos son incorrectos');
+    throw new UnauthorizedException('Credenciales incorrectas');
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.usersRepository.findOne({ where: { email } });
-    if (user && await bcrypt.compare(password, user.password)) {
-      const { password, ...result } = user;
-      return result;
+  async refreshToken(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token);
+      const payload = { email: decoded.email, sub: decoded.sub };
+      return {
+        access_token: this.jwtService.sign(payload),
+      };
+    } catch (e) {
+      throw new UnauthorizedException('Token inválido o expirado');
     }
-    return null;
-  }
-
-  generateToken(payload: any): string {
-    return this.jwtService.sign(payload);
   }
 }

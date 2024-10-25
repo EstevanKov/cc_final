@@ -2,12 +2,10 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
-  static login(LoginUserDto: LoginUserDto): any {
-      throw new Error("Method not implemented.");
-  }
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
@@ -18,5 +16,11 @@ export class AuthController {
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+
+  @Post('refresh')
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
+    const { refresh_token } = refreshTokenDto;
+    return this.authService.refreshToken(refresh_token);
   }
 }

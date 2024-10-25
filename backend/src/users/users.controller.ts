@@ -2,51 +2,34 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGua
 import { updateUser, usersNew } from './users.dto';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { LoginUserDto } from '../auth/dto/login-user.dto';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
-    constructor(private readonly UsersServ: UsersService) {}
+  @Post()
+  insert(@Body() user: usersNew) {
+    return this.usersService.agregarUser(user);
+  }
 
-    @Post('register')
-    async register(@Body() user: usersNew) {
-        const registrationResult = await this.UsersServ.register(user);
-        return registrationResult;
-    }
+  @Get()
+  findAll() {
+    return this.usersService.getUsers();
+  }
 
-    @Post('login')
-    login(@Body() loginUserDto: LoginUserDto) {
-        return this.UsersServ.login(loginUserDto);
-    }
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findUser(id);
+  }
 
-    @UseGuards(JwtAuthGuard)
-    @Post()
-    insert(@Body() User: usersNew){
-        return this.UsersServ.agregarUser(User);
-    }
+  @Patch(':id')
+  updateUser(@Param('id', ParseIntPipe) id: number, @Body() updateUser: updateUser) {
+    return this.usersService.updateUser(id, updateUser);
+  }
 
-    @UseGuards(JwtAuthGuard)
-    @Get()
-    Find(){
-        return this.UsersServ.getUsers();
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number){
-        return this.UsersServ.findUser(id);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Patch(':id')
-    updateUser(@Param('id', ParseIntPipe) id: number,  @Body() updatU: updateUser){
-        return this.UsersServ.updateUser(id, updatU);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Delete(':id')
-    deleteUser(@Param('id', ParseIntPipe) id: number){
-        return this.UsersServ.deleteUser(id);
-    }
+  @Delete(':id')
+  deleteUser(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.deleteUser(id);
+  }
 }

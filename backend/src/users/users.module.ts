@@ -10,15 +10,8 @@ import { JwtStrategy } from '../auth/jwt.strategy';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Users]), 
-    PassportModule,AuthModule,
-    JwtModule.register({
-      secret: 'secretKey',
-      signOptions: { expiresIn: '60m' },
-    }),
-  ],
-  providers: [UsersService, AuthService, JwtStrategy],
+  imports: [TypeOrmModule.forFeature([Users])],
+  providers: [UsersService],
   controllers: [UsersController],
 })
 export class UsersModule {}
