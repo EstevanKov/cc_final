@@ -1,8 +1,9 @@
+// src/features/auth/presentation/LoginView.tsx
+
 import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
+import { useLogin } from "../aplications/useLogin";
 
 export function LoginView() {
   const [email, setEmail] = useState("correo@correo.com");
@@ -11,34 +12,17 @@ export function LoginView() {
   const [successMessage, setSuccessMessage] = useState('');
   const router = useRouter();
 
-  const onLogin = async () => {
-    const loginData = {
-      email: email,
-      password: password,
-    };
-
-    try {
-      const response = await axios.post('http://localhost:3000/auth/login', loginData);
-      // Si el inicio de sesión es exitoso, guardar los tokens en AsyncStorage
-      const { access_token, refresh_token } = response.data;
-      await AsyncStorage.setItem('access_token', access_token);
-      await AsyncStorage.setItem('refresh_token', refresh_token);
-      
-      // Mostrar mensaje de éxito y redirigir
-      setSuccessMessage(response.data.message);
+  const handleLogin = async () => {
+    const result = await useLogin(email, password);
+    if (result.success) {
+      setSuccessMessage(result.message);
       setErrorMessage('');
       setTimeout(() => {
         router.push('/'); // Redirigir a la pantalla principal
       }, 2000);
-    } catch (error: any) { // Especificar el tipo de error como any
-      const axiosError = error.response?.data;
-      if (axiosError && axiosError.message) {
-        setErrorMessage(axiosError.message);
-      } else {
-        setErrorMessage('Error desconocido. Inténtalo de nuevo.');
-      }
+    } else {
+      setErrorMessage(result.message);
       setSuccessMessage('');
-      console.error(error);
     }
   };
 
@@ -59,7 +43,7 @@ export function LoginView() {
         onChangeText={setPassword}
       />
       
-      <Button title="INICIAR SESIÓN" onPress={onLogin} />
+      <Button title="INICIAR SESIÓN" onPress={handleLogin} />
 
       {successMessage ? (
         <Text style={styles.success}>{successMessage}</Text>

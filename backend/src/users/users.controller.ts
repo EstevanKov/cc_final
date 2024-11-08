@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { updateUser, usersNew } from './users.dto';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -24,8 +24,16 @@ export class UsersController {
   }
 
   @Patch(':id')
-  updateUser(@Param('id', ParseIntPipe) id: number, @Body() updateUser: updateUser) {
-    return this.usersService.updateUser(id, updateUser);
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUser: updateUser
+  ) {
+    try {
+      const result = await this.usersService.updateUser(id, updateUser);
+      return { message: `User with id ${id} updated successfully`, result };
+    } catch (err) {
+      throw new NotFoundException(err.message || 'Error updating user');
+    }
   }
 
   @Delete(':id')
