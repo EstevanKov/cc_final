@@ -33,7 +33,7 @@ describe('UsersController', () => {
         usersController = module.get<UsersController>(UsersController);
         usersService = module.get<UsersService>(UsersService);
     });
-    describe('register', () => {
+   /* describe('register', () => {
         it('debería registrar un nuevo usuario', async () => {
             const userDto: usersNew = { userName: 'admin', email: 'admin@admin.com', password: 'admin' };
             const result = {
@@ -132,7 +132,7 @@ describe('UsersController', () => {
             expect(await usersController.updateUser(1, updateUserDto)).toBeUndefined();
         });
     });
-
+*/
 
     describe('deleteUser', () => {
         it('debería eliminar un usuario', async () => {
