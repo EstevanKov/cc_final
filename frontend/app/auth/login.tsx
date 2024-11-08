@@ -1,4 +1,4 @@
-import { LoginView } from "../../components/features/auth/aplications/screens/loginView";
+import { LoginView } from "../../components/features/auth/screens/loginView";
 
 export default function LoginScreen(){
 
