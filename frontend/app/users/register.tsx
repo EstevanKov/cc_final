@@ -1,4 +1,4 @@
-import { CreateUsersView } from "../../components/features/users/applications/screens/createUsersView"
+import { CreateUsersView } from "../../components/features/users/screens/createUsersView"
 
 export default function CreateUsersScreen(){
 
