@@ -69,6 +69,7 @@ export class AuthService {
     const payload = { email: user.email, sub: user.id };
     return {
       message:'Inicio de sesión éxitoso',
+      id:user.id, 
       access_token: this.jwtService.sign(payload),
       refresh_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
     };
