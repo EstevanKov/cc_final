@@ -7,6 +7,7 @@ export class usersNew{
 
     @IsNotEmpty({message:"No puede quedar vacío"})
     @IsString({message:"El dato debe ser texto"})
+    @IsEmail({}, { message: "El dato debe ser un email válido" })
     email:string
 
     @IsNotEmpty({message:"No puede quedar vacío"})

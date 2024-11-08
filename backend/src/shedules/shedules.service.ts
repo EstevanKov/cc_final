@@ -6,28 +6,31 @@ import { newShed, updatShed } from './shedelus.dto';
 import { Medicina } from '../medications/medications.entity';
 import { Users } from '../users/users.entity';
 
+
+
 @Injectable()
 export class ShedulesService {
-    constructor(
-        @InjectRepository(Shedules) private readonly sRepository: Repository<Shedules>
-    ) {}
+  constructor(
+    @InjectRepository(Shedules) private readonly sRepository: Repository<Shedules>
+  ) {}
 
-    async createS(shed: newShed): Promise<Shedules> {
-        const medicina = new Medicina();
-        medicina.id = shed.medicina;
+  async createS(shed: newShed): Promise<Shedules> {
+    const medicina = new Medicina();
+    medicina.id = shed.medicina; // Medicamento que acaba de ser creado
 
-        const user = new Users();
-        user.id = shed.user;
+    const user = new Users();
+    user.id = shed.user; // Usuario que está activo en la sesión
 
-        const shedul = this.sRepository.create({
-            medicina,
-            users: user,
-            interval_hours: shed.intervalo,
-            finish_dose_time: shed.finish_time,
-        });
+    const shedul = this.sRepository.create({
+      medicina,
+      users: user,
+      interval_hours: shed.intervalo,
+      finish_dose_time: shed.finish_time,
+    });
 
-        return await this.sRepository.save(shedul);
-    }
+    return await this.sRepository.save(shedul);
+  }
+
 
     async findAll(): Promise<Shedules[]> {
         return await this.sRepository.find({

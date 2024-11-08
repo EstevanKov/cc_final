@@ -14,6 +14,10 @@ export class Newmedicina {
     @IsInt({message:"El dato debe ser un número"})
     user: number;
 
+    intervalo: number;
+
+    finish_time: Date;
+
   }
   
   export class Updatmedicina {

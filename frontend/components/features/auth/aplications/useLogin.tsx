@@ -1,6 +1,7 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BACKEND_URL } from "@env";
+//console.log("BACKEND_URL:", BACKEND_URL);
 
 interface LoginResponse {
   success: boolean;
@@ -11,7 +12,7 @@ export const useLogin = async (email: string, password: string): Promise<LoginRe
   const loginData = { email, password };
 
   try {
-    const response = await axios.post(`${BACKEND_URL}/auth/login`, loginData);
+    const response = await axios.post(`${BACKEND_URL}/auth/login`, loginData); 
     const { access_token, refresh_token, id, message } = response.data;
 
     

@@ -7,6 +7,7 @@ import { Shedules } from './shedules.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Shedules])],
   providers: [ShedulesService],
-  controllers: [ShedulesController]
+  controllers: [ShedulesController],
+  exports: [ShedulesService],  // Exporta el servicio aquí
 })
 export class ShedulesModule {}
