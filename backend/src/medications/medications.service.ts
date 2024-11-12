@@ -48,20 +48,23 @@ export class MedicationsService {
     }
   }
 
-    async findAll(): Promise<Medicina[]> {
-        return await this.MRepository.find({ relations: ['user'] });
-    }
+  async findAll(): Promise<Medicina[]> {
+    const medications = await this.MRepository.find({ relations: ['user'] });
+    console.log('Medications fetched:', medications);  // Verificar los datos aquí
+    return medications;
+}
 
-    async findMedicina(id: number): Promise<Medicina> {
-        const medicina = await this.MRepository.findOne({
-            where: { id },
-            relations: ['user', 'schedules'],
-        });
-        if (!medicina) {
-            throw new NotFoundException(`Medicina with id ${id} not found`);
-        }
-        return medicina;
-    }
+async findMedicina(id: number): Promise<Medicina> {
+  const medicina = await this.MRepository.findOne({
+      where: { id },
+      relations: ['user', 'schedules'],
+  });
+  if (!medicina) {
+      throw new NotFoundException(`Medicina with id ${id} not found`);
+  }
+  return medicina;
+}
+
 
     async updateM(id: number, medicina: Partial<Medicina>): Promise<void> {
         const updateResult = await this.MRepository.update(id, medicina);
