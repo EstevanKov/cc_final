@@ -1,54 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons"; // Para los íconos
-import { Link, router } from "expo-router";
-import axios from "axios";
-import { BACKEND_URL } from "@env"; // Asegúrate de tener esta variable en tu .env
+import { MaterialIcons } from "@expo/vector-icons";
+import { UserContext } from "../providers/UserProvider";
 
-interface User {
-  user: string;
-  email: string;
-}
+export const UserView = () => {
+  const userContext = useContext(UserContext);
 
-export const UsersView = () => {
-  const [user, setUser] = useState<User | null>(null);
+  if (!userContext) {
+    return <Text>No se pudo cargar el contexto de usuario.</Text>;
+  }
+
+  const { user, fetchUserData, logout, edit, deleteUser } = userContext;
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem("access_token");
-      const id = localStorage.getItem("id");
-
-      if (token && id) {
-        try {
-          const response = await axios.get(`${BACKEND_URL}/users/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          setUser(response.data);
-        } catch (error) {
-          console.error("Error fetching user data", error);
-        }
-      }
-    };
-
     fetchUserData();
-  }, []);
-
-  // Función para cerrar sesión y limpiar localStorage
-  const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("id");
-    localStorage.removeItem("refresh_token");
-    // Redirigir a la página de login
-    router.push( "/auth/login"); // Cambia esta línea si usas un enrutador diferente
-  };
-
-  const edit = () => {
-    router.push( "/users/edit");
-  };
-
-  const deleteU = () =>{
-    router.push( "/users/delete");
-  };
+  }, [fetchUserData]);
 
   return (
     <View style={styles.container}>
@@ -72,16 +38,10 @@ export const UsersView = () => {
             <Text>Editar</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.option} onPress={deleteU}>
+          <TouchableOpacity style={styles.option} onPress={deleteUser}>
             <MaterialIcons name="notifications" size={24} color="#2196F3" />
             <Text>Eliminar cuenta</Text>
           </TouchableOpacity>
-
-          {/** 
-          <TouchableOpacity style={styles.option}>
-            <MaterialIcons name="account-circle" size={24} color="#2196F3" />
-            <Text>Perfil</Text>
-          </TouchableOpacity>*/}
         </View>
 
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
@@ -97,7 +57,7 @@ const styles = StyleSheet.create({
   profileContainer: { width: "80%", alignItems: "center" },
   logoContainer: { marginBottom: 20 },
   logoText: { fontSize: 24, fontWeight: "bold", color: "black" },
-  userName: { fontSize: 30, marginVertical: 10,fontWeight: "bold" },
+  userName: { fontSize: 30, marginVertical: 10, fontWeight: "bold" },
   userEmail: { fontSize: 18, marginVertical: 5 },
   optionsContainer: {
     width: "100%",

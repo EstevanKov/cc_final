@@ -1,57 +1,13 @@
-import React, { useState } from "react";
+// DeleteUserView.tsx
+import React, { useContext } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
-import axios, { AxiosError } from "axios";
-import { useRouter } from "expo-router";
-import { BACKEND_URL } from "@env";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { DeleteUserContext } from "../providers/DeleteUserProvider";
 export const DeleteUserView = () => {
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const router = useRouter();
-
-  const handleDeleteUser = async () => {
-    setErrorMessage("");
-
-    if (!currentPassword) {
-      setErrorMessage("Por favor ingresa la contraseña actual para confirmar.");
-      return;
-    }
-
-    const token = await AsyncStorage.getItem("access_token");
-    const id = await AsyncStorage.getItem("id");
-
-    if (token && id) {
-      try {
-        await axios.delete(`${BACKEND_URL}/users/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          data: { currentPassword }, // Enviar la contraseña actual para la confirmación
-        });
-
-        // Eliminar datos de AsyncStorage
-        await AsyncStorage.removeItem("access_token");
-        await AsyncStorage.removeItem("refresh_token");
-        await AsyncStorage.removeItem("id");
-
-        // Redirigir a la pantalla de inicio de sesión
-        router.push("/auth/login");
-      } catch (error: unknown) {
-        // Verificar si el error es de Axios
-        if (error instanceof AxiosError) {
-          setErrorMessage(error.response?.data?.message || "Hubo un problema al eliminar la cuenta.");
-        } else {
-          setErrorMessage("Ocurrió un error inesperado.");
-        }
-      }
-    } else {
-      setErrorMessage("No se pudo autenticar al usuario.");
-    }
-  };
+  const { currentPassword, setCurrentPassword, errorMessage, handleDeleteUser } = useContext(DeleteUserContext);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Eliminar Cuenta</Text>
-      
       <Text style={styles.subtitle}>Ingrese su contraseña actual para confirmar eliminación</Text>
       
       <TextInput

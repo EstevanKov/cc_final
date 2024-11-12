@@ -1,3 +1,4 @@
+// app/(tabs)/_layout.tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import UsersScreen from '../users/loged';
