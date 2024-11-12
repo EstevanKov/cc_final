@@ -1,8 +1,7 @@
-// CreateUsersView.tsx
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
-import { CreateUserContext } from '../providers/CreateUserProvider';
+import { useCreateUser } from '../applications/useCreateUser'; 
 
 export const CreateUsersView = () => {
   const {
@@ -11,7 +10,7 @@ export const CreateUsersView = () => {
     password, setPassword,
     errorMessage, successMessage,
     handleCreateUser,
-  } = useContext(CreateUserContext);
+  } = useCreateUser();
 
   return (
     <View style={styles.container}>

@@ -1,4 +1,3 @@
-// useCreateUser.ts
 import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { BACKEND_URL } from '@env';
@@ -19,10 +18,15 @@ export const useCreateUser = () => {
   const router = useRouter();
 
   const handleCreateUser = async () => {
-    const userData = { user: name, email: email, password: password };
+    const userData = {
+      user: name,
+      email: email,
+      password: password,
+    };
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/auth/register`, userData);
+      const response = await axios.post(`${BACKEND_URL}/auth/register`, userData); 
+      
       setSuccessMessage(response.data.message);
       setErrorMessage('');
 
