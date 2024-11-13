@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"; 
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from "react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { BACKEND_URL } from "@env";
@@ -106,7 +106,10 @@ export const EditUserView = () => {
         value={currentPassword}
         onChangeText={setCurrentPassword}
       />
-      <Button title="Actualizar Datos" onPress={handleUpdateUser} />
+      <TouchableOpacity style={styles.button} onPress={handleUpdateUser}>
+  <Text style={styles.buttonText}>Actualizar Datos</Text>
+</TouchableOpacity>
+
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
       {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
     </View>
@@ -115,32 +118,57 @@ export const EditUserView = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+    color: '#000',
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginTop: 16,
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 16,
   },
   input: {
+    width: '90%',
+    height: 50,
     borderWidth: 1,
-    padding: 8,
+    borderColor: '#00E7F3',
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    fontSize: 16,
     marginVertical: 8,
-    borderRadius: 4,
+  },
+  button: {
+    width: '90%',
+    height: 50,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 16,
+    backgroundColor: '#00D1A0',
+  },
+  buttonText: {
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold',
   },
   error: {
     color: 'red',
     marginTop: 8,
+    textAlign: 'center',
   },
   success: {
     color: 'blue',
     marginTop: 8,
+    textAlign: 'center',
   },
 });

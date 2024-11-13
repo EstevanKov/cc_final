@@ -126,7 +126,7 @@ export function EditMedicationsView({ navigation }: { navigation: any }) {
           style={styles.input}
           onValueChange={(itemValue) => setPillCount(Number(itemValue))}
         >
-          {[...Array(10).keys()].map((i) => (
+          {[...Array(30).keys()].map((i) => (
             <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
           ))}
         </Picker>

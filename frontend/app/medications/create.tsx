@@ -1,4 +1,4 @@
-import { CreateMedicationsView } from "../../components/features/medications/aplications/screens/createMedicationView";
+import { CreateMedicationsView } from "../../components/features/medications/screens/createMedicationView";
 
 
 

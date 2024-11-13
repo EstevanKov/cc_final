@@ -1,4 +1,4 @@
-import { EditMedicationsView } from "@/components/features/medications/aplications/screens/editMeditacionsView";
+import { EditMedicationsView } from "@/components/features/medications/screens/editMeditacionsView";
 
 import { useNavigation } from '@react-navigation/native';
 

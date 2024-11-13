@@ -102,13 +102,14 @@ export const MedicationsView = () => {
       <Text style={styles.medicationName}>{item.name}</Text>
       <Text style={styles.doseText}>Cantidad: {item.quantity}</Text>
       <View style={styles.iconsContainer}>
-        <TouchableOpacity onPress={() => handleEdit(item.id)}>
-          <MaterialIcons name="edit" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDelete(item.id)}>
-          <MaterialIcons name="delete" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
+  <TouchableOpacity style={styles.iconButton} onPress={() => handleEdit(item.id)}>
+    <MaterialIcons name="edit" size={24} style={styles.editIcon} />
+  </TouchableOpacity>
+  <TouchableOpacity style={styles.iconButton} onPress={() => handleDelete(item.id)}>
+    <MaterialIcons name="delete" size={24} style={styles.deleteIcon} />
+  </TouchableOpacity>
+</View>
+
     </View>
   );
 
@@ -135,12 +136,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
   },
   card: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#24b5b1',
     borderRadius: 10,
     padding: 16,
     marginVertical: 8,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3, // Sombra para Android
   },
   time: {
     fontSize: 12,
@@ -149,7 +153,7 @@ const styles = StyleSheet.create({
   medicationName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
     marginVertical: 4,
   },
   doseText: {
@@ -159,7 +163,18 @@ const styles = StyleSheet.create({
   iconsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8,
+    marginTop: 16,
+  },
+  iconButton: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 8,
+  },
+  editIcon: {
+    color: '#4CAF50', // Color verde para el botón de editar
+  },
+  deleteIcon: {
+    color: '#F44336', // Color rojo para el botón de eliminar
   },
   title: {
     fontSize: 24,

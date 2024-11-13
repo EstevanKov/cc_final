@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons"; // Para los íconos
 import { Link, router } from "expo-router";
 import axios from "axios";
@@ -52,13 +52,17 @@ export const UsersView = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.headerBackground} />
+
       <View style={styles.profileContainer}>
-        <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>Capsule Care</Text>
-        </View>
+        <Image
+          source={require("../../../../assets/images/logo.png")}
+          style={styles.logo}
+        />
 
         {user ? (
           <>
+            <Text style={styles.appName}>Capsule Care</Text>
             <Text style={styles.userName}>{user.user}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
           </>
@@ -68,20 +72,14 @@ export const UsersView = () => {
 
         <View style={styles.optionsContainer}>
           <TouchableOpacity style={styles.option} onPress={edit}>
-            <MaterialIcons name="email" size={24} color="#2196F3" />
-            <Text>Editar</Text>
+            <MaterialIcons name="email" size={24} color="#00CED1" />
+            <Text style={styles.optionText}>Editar</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.option} onPress={deleteU}>
-            <MaterialIcons name="notifications" size={24} color="#2196F3" />
-            <Text>Eliminar cuenta</Text>
+            <MaterialIcons name="notifications" size={24} color="#00CED1" />
+            <Text style={styles.optionText}>Eliminar cuenta</Text>
           </TouchableOpacity>
-
-          {/** 
-          <TouchableOpacity style={styles.option}>
-            <MaterialIcons name="account-circle" size={24} color="#2196F3" />
-            <Text>Perfil</Text>
-          </TouchableOpacity>*/}
         </View>
 
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
@@ -93,40 +91,74 @@ export const UsersView = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
-  profileContainer: { width: "80%", alignItems: "center" },
-  logoContainer: { marginBottom: 20 },
-  logoText: { fontSize: 24, fontWeight: "bold", color: "black" },
-  userName: { fontSize: 30, marginVertical: 10,fontWeight: "bold" },
-  userEmail: { fontSize: 18, marginVertical: 5 },
+  container: { flex: 1, alignItems: 'center', backgroundColor: '#FFFFFF' },
+  headerBackground: {
+    backgroundColor: '#00E3DB',
+    width: '100%',
+    height: '20%',
+    position: 'absolute',
+    top: 0,
+  },
+  profileContainer: {
+    width: '80%',
+    alignItems: 'center',
+    marginTop: '25%',
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: '#00E3DB',
+    marginBottom: 10,
+  },
+  appName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
+    marginVertical: 5,
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+    marginVertical: 5,
+  },
+  userEmail: {
+    fontSize: 16,
+    color: '#555',
+    marginVertical: 5,
+  },
   optionsContainer: {
-    width: "100%",
-    flexDirection: "column",
-    marginVertical: 20,
+    width: '100%',
+    marginTop: 20,
   },
   option: {
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: "#2196F3",
+    borderColor: '#00E3DB',
     borderRadius: 10,
-    padding: 15,
-    marginVertical: 10,
-    alignItems: "center",
-    width: "100%",
+    padding: 10,
+    marginVertical: 5,
+  },
+  optionText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#000',
   },
   logoutButton: {
-    backgroundColor: "#2196F3",
-    padding: 15,
+    backgroundColor: '#00E3DB',
+    paddingVertical: 12,
     borderRadius: 10,
-    width: "50%",
-    alignSelf: "center",
+    width: '100%',
+    alignItems: 'center',
     marginTop: 20,
-    justifyContent: "center",
-    alignItems: "center",
   },
   logoutButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-    width: "100%",
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
+

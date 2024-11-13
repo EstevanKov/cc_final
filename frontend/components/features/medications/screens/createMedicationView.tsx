@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, StyleSheet, Text } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  TextInput,
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { BACKEND_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function CreateMedicationsView() {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [pillCount, setPillCount] = useState(1);
   const [intervalHours, setIntervalHours] = useState(1);
   const [endDate, setEndDate] = useState(new Date());
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     calculateEndDate();
@@ -17,7 +24,7 @@ export function CreateMedicationsView() {
 
   useEffect(() => {
     if (successMessage) {
-      const timer = setTimeout(() => setSuccessMessage(''), 3000); // Eliminar el mensaje después de 3 segundos
+      const timer = setTimeout(() => setSuccessMessage(""), 3000); // Eliminar el mensaje después de 3 segundos
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
@@ -35,10 +42,10 @@ export function CreateMedicationsView() {
   const handleAddMedication = async () => {
     if (loading) return; // Evitar múltiples clics
     setLoading(true);
-  
+
     const token = await AsyncStorage.getItem("access_token");
     const id = await AsyncStorage.getItem("id");
-  
+
     // Asegurarse de que endDate sea válida antes de convertir
     if (isNaN(endDate.getTime())) {
       console.error("Fecha de término inválida", endDate);
@@ -46,28 +53,31 @@ export function CreateMedicationsView() {
       setLoading(false);
       return;
     }
-  
+
     const medicamentoData = {
       name,
       quantity: pillCount,
-      intervalo: intervalHours, 
+      intervalo: intervalHours,
       finish_time: endDate.toISOString(),
       user: id,
     };
-  
+
     try {
-      const response = await fetch(`${BACKEND_URL}/medications/addWithSchedule`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(medicamentoData),
-      });
-  
+      const response = await fetch(
+        `${BACKEND_URL}/medications/addWithSchedule`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(medicamentoData),
+        }
+      );
+
       if (response.ok) {
         setSuccessMessage("Medicamento añadido exitosamente");
-        setName('');
+        setName("");
         setPillCount(1);
         setIntervalHours(1);
         setEndDate(new Date());
@@ -80,7 +90,6 @@ export function CreateMedicationsView() {
       setLoading(false);
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -100,7 +109,7 @@ export function CreateMedicationsView() {
           style={styles.input}
           onValueChange={(itemValue) => setPillCount(Number(itemValue))}
         >
-          {[...Array(10).keys()].map((i) => (
+          {[...Array(30).keys()].map((i) => (
             <Picker.Item key={i} label={`${i + 1}`} value={i + 1} />
           ))}
         </Picker>
@@ -117,17 +126,19 @@ export function CreateMedicationsView() {
         </Picker>
 
         <Text style={styles.label}>Fecha de término calculada</Text>
-        <Text style={styles.dateText}>
-          {endDate.toLocaleString()}
-        </Text>
+        <Text style={styles.dateText}>{endDate.toLocaleString()}</Text>
 
-        {successMessage ? <Text style={styles.successMessage}>{successMessage}</Text> : null}
+        {successMessage ? (
+          <Text style={styles.successMessage}>{successMessage}</Text>
+        ) : null}
 
-        <View style={styles.buttonContainer}>
-          <Button title="Agregar Medicamentos" onPress={handleAddMedication} />
-        </View>
-        <View style={styles.buttonContainer}>
-          <Button title="Cancelar" onPress={() => {}} />
+<View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleAddMedication}>
+            <Text style={styles.buttonText}>Agregar Medicamentos</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cancelButton} onPress={() => {}}>
+            <Text style={styles.buttonText}>Cancelar</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -137,40 +148,67 @@ export function CreateMedicationsView() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   content: {
     padding: 16,
-    paddingTop: 80,
+    paddingTop: 40,
     flex: 1,
     justifyContent: 'flex-start',
   },
-  input: {
-    borderWidth: 1,
-    padding: 8,
-    marginVertical: 8,
-    borderRadius: 4,
-  },
-  buttonContainer: {
-    marginVertical: 10,
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#000',
+    marginBottom: 20,
+    backgroundColor: '#00E3DB',
+    paddingVertical: 10,
   },
   label: {
-    marginVertical: 8,
+    fontSize: 16,
+    marginBottom: 8,
+    color: '#000',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#00E3DB',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 16,
     fontSize: 16,
   },
-  dateText: {
-    fontSize: 16,
-    marginVertical: 8,
+  buttonContainer: {
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#00E3DB',
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  cancelButton: {
+    backgroundColor: '#00E3DB',
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: '#FFF',
     fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 16,
   },
   successMessage: {
     fontSize: 16,
     color: 'green',
     marginVertical: 8,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
+  dateText: {
+    fontSize: 16,
+    marginVertical: 8,
+    fontWeight: 'bold',
+    color: '#000',
   },
 });

@@ -1,4 +1,4 @@
-import { MedicationsView } from "../../components/features/medications/aplications/screens/medicationsView";
+import { MedicationsView } from "../../components/features/medications/screens/medicationsView";
 
 export default function MedicationsScreen(){
 
