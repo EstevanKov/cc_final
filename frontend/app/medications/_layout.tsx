@@ -11,6 +11,9 @@ export default function MedicationsLayout(){
             <Stack.Screen name="create" options={{
                 title:"Registrar medicinas"
             }}/>
+            <Stack.Screen name="edit" options={{
+                title:"Editar medicinas"
+            }}/>
         </Stack>
     );
 }

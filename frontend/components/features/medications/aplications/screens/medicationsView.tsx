@@ -3,19 +3,28 @@ import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BACKEND_URL } from '@env';
+import { router } from 'expo-router';
 
 export const MedicationsView = () => {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [loading, setLoading] = useState(true);
 
-  interface Medication {
-    id: string;
-    name: string;
-    quantity: number; // Cambiado a quantity según la respuesta del backend
-    schedules: { id: string; start_time: string; interval_hours: number; finish_dose_time: string }[]; // Añadido finish_dose_time
+  interface User {
+    id: number;
+    user: string;
+    email: string;
+    password: string;
+    createdAt: string;
   }
 
-  // Cargar medicamentos desde el backend
+  interface Medication {
+    id: number;
+    name: string;
+    quantity: number;
+    user: User;
+    schedules?: { id: string; start_time: string; interval_hours: number; finish_dose_time: string }[];
+  }
+
   useEffect(() => {
     const fetchMedications = async () => {
       try {
@@ -25,18 +34,18 @@ export const MedicationsView = () => {
           console.error('No token or user ID found');
           return;
         }
-  
-        const response = await fetch(`${BACKEND_URL}/medications/${userId}`, {
+
+        const response = await fetch(`${BACKEND_URL}/medications`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-  
+
         if (response.ok) {
-          const data = await response.json();
-          console.log('Fetched medications:', data);  // Verifica los datos que recibes aquí
-          setMedications(data);
+          const data: Medication[] = await response.json();
+          const userMedications = data.filter((med: Medication) => med.user.id === parseInt(userId, 10));
+          setMedications(userMedications);
         } else {
           console.error('Error fetching medications', await response.json());
         }
@@ -46,20 +55,18 @@ export const MedicationsView = () => {
         setLoading(false);
       }
     };
-  
+
     fetchMedications();
   }, []);
+
+  const handleEdit = (id: number) => {
+    console.log(`Editar medicamento con ID: ${id}`);
+    AsyncStorage.setItem('medicationId', id.toString());  // Guardar el ID en AsyncStorage
+    router.push("/medications/edit");
+  };
   
 
-  // Manejar la edición de medicamentos
-  const handleEdit = (id: string) => {
-    console.log(`Editar medicamento con ID: ${id}`);
-    // Aquí deberías navegar al formulario de edición con los datos del medicamento
-    // Por ejemplo, utilizando React Navigation
-  };
-
-  // Manejar la eliminación de medicamentos
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     console.log(`Eliminar medicamento con ID: ${id}`);
     try {
       const token = await AsyncStorage.getItem('access_token');
@@ -74,7 +81,7 @@ export const MedicationsView = () => {
 
       if (response.ok) {
         setMedications((prevMedications) =>
-          prevMedications.filter((medication) => medication.id !== id)
+          prevMedications.filter((medication: Medication) => medication.id !== id)
         );
         console.log('Medication deleted successfully');
       } else {
@@ -87,13 +94,13 @@ export const MedicationsView = () => {
 
   const renderItem = ({ item }: { item: Medication }) => (
     <View style={styles.card}>
-      {item.schedules.map((schedule) => (
+      {item.schedules?.map((schedule) => (
         <Text key={schedule.id} style={styles.time}>
           {new Date(schedule.start_time).toLocaleTimeString()} - Intervalo: {schedule.interval_hours} horas
         </Text>
       ))}
       <Text style={styles.medicationName}>{item.name}</Text>
-      <Text style={styles.doseText}>Cantidad: {item.quantity}</Text>  {/* Cambiado a quantity en lugar de dose */}
+      <Text style={styles.doseText}>Cantidad: {item.quantity}</Text>
       <View style={styles.iconsContainer}>
         <TouchableOpacity onPress={() => handleEdit(item.id)}>
           <MaterialIcons name="edit" size={24} color="white" />
@@ -114,7 +121,7 @@ export const MedicationsView = () => {
         <FlatList
           data={medications}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
         />
       )}
     </View>

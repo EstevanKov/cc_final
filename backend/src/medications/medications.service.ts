@@ -66,12 +66,13 @@ async findMedicina(id: number): Promise<Medicina> {
 }
 
 
-    async updateM(id: number, medicina: Partial<Medicina>): Promise<void> {
-        const updateResult = await this.MRepository.update(id, medicina);
-        if (updateResult.affected === 0) {
-            throw new NotFoundException(`Medicina with id ${id} not found`);
-        }
-    }
+// En MedicationsService
+async updateM(id: number, updateData: Partial<Medicina>): Promise<Medicina> {
+  await this.MRepository.update(id, updateData);
+  return this.MRepository.findOne({ where: { id } }); // Devuelve el objeto actualizado
+}
+
+
 
     async deleteM(id: number): Promise<string> {
         const find = await this.MRepository.findOne({ where: { id } });

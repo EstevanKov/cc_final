@@ -33,7 +33,38 @@ export class MedicationsController {
         // Llamar al servicio de Shedules para guardar el horario
         return this.shedulesService.createS(shedulesData);
     }
+    
+    @Patch('/editWithSchedule/:id')
+    async editarMedicinaConHorario(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() medicinaData: { name?: string, quantity?: number, user: number, intervalo?: number, finish_time?: Date }
+    ) {
+        // Actualizar los datos del medicamento en la tabla Medicina
+        const updatedMedicina = await this.MServ.updateM(id, {
+            name: medicinaData.name,
+            quantity: medicinaData.quantity,
+        });
+    
+        if (!updatedMedicina) {
+            throw new NotFoundException(`Medicina con id ${id} no encontrada`);
+        }
+    
+        // Verifica si se debe actualizar el horario
+        if (medicinaData.intervalo || medicinaData.finish_time) {
+            const shedulesData = {
+                medicina: updatedMedicina.id,
+                user: medicinaData.user,
+                intervalo: medicinaData.intervalo,
+                finish_time: medicinaData.finish_time,
+            };
+    
+            await this.shedulesService.updateS(updatedMedicina.id, shedulesData);
+        }
+    
+        return updatedMedicina;
+    }
 
+    
     @Post()
     agregarM(@Body() medicina: Newmedicina) {
         return this.MServ.createM(medicina);

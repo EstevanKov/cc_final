@@ -23,6 +23,17 @@ export const DeleteUserView = () => {
 
     if (token && id) {
       try {
+        /*/ Eliminar schedules asociados al usuario
+        await axios.delete(`${BACKEND_URL}/users/${id}/shedules`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Eliminar medications asociados al usuario
+        await axios.delete(`${BACKEND_URL}/users/${id}/medications`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Eliminar usuario*/
         await axios.delete(`${BACKEND_URL}/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
           data: { currentPassword }, // Enviar la contraseña actual para la confirmación

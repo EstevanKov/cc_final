@@ -31,6 +31,23 @@ export class ShedulesService {
     return await this.sRepository.save(shedul);
   }
 
+  async updateS(id: number, updateShed: updatShed) {
+    const shedules = await this.sRepository.findOne({ where: { id } });
+
+    if (!shedules) {
+        throw new NotFoundException('Schedule not found');
+    }
+
+    if (updateShed.intervalo) {
+        shedules.interval_hours = updateShed.intervalo;
+    }
+
+    if (updateShed.finish_time) {
+        shedules.finish_dose_time = updateShed.finish_time;
+    }
+
+    return await this.sRepository.save(shedules);
+}
 
     async findAll(): Promise<Shedules[]> {
         return await this.sRepository.find({
